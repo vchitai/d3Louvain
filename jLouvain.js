@@ -18,6 +18,7 @@
 		var original_graph = {};
 		var partition_init;
 		var edge_index = {};
+		var status_listS = [];
 
 		//Helpers
 		function make_set(array) {
@@ -235,6 +236,7 @@
 					count = count + 1;
 				}
 				ret[key] = new_value;
+				status_listS.push([clone(ret)])
 			});
 
 			return ret;
@@ -304,6 +306,7 @@
 
 		function partition_at_level(dendogram, level) {
 			var partition = clone(dendogram[0]);
+
 			for (var i = 1; i < level + 1; i++) {
 				Object.keys(partition).forEach(function (key, j) {
 					var node = key;
@@ -314,7 +317,6 @@
 
 			return partition;
 		}
-
 
 		function generate_dendogram(graph, part_init) {
 			if (graph.edges.length === 0) {
@@ -340,6 +342,7 @@
 			while (true) {
 				__one_level(current_graph, status);
 				new_mod = __modularity(status);
+				status_listS.push(clone(status_list));
 				if (new_mod - mod < __MIN) {
 					break;
 				}
@@ -355,12 +358,28 @@
 			return status_list;
 		}
 
+		var dendogramS = {};
 		var core = function () {
 			var status = {};
 			var dendogram = generate_dendogram(original_graph, partition_init);
-
+			dendogramS = dendogram;
 			return partition_at_level(dendogram, dendogram.length - 1);
 		};
+		var nextS = -1;
+
+		core.nextStep = function () {
+			if (nextS == -1) {	
+				var dendogram = generate_dendogram(original_graph, partition_init);
+				dendogramS = clone(dendogram);
+			}
+			if (nextS < status_listS.length) {
+				nextS += 1;
+				return partition_at_level(status_listS[nextS], status_listS[nextS].length - 1);
+			}
+			else {
+				return undefined;
+			}
+		}
 
 		core.nodes = function (nds) {
 			if (arguments.length > 0) {
