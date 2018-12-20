@@ -68,3 +68,22 @@ function createTableFromX(obj) {
   table.appendChild(tableBody);
   document.body.appendChild(table);
 }
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+function getRandomFloat(max) {
+  return Math.random() * Math.floor(max);
+}
+Array.prototype.sample = function(){
+  return this[Math.floor(Math.random()*this.length)];
+}
+function getRandomSubarray(arr, size) {
+  var shuffled = arr.slice(0), i = arr.length, temp, index;
+  while (i--) {
+      index = Math.floor((i + 1) * Math.random());
+      temp = shuffled[index];
+      shuffled[index] = shuffled[i];
+      shuffled[i] = temp;
+  }
+  return shuffled.slice(0, size);
+}

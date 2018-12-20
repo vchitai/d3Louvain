@@ -12,6 +12,9 @@
     crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP"
+    crossorigin="anonymous" />
+
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="../jLouvain.js"></script>
   <script type="text/javascript" src="./example.js"></script>
@@ -29,19 +32,54 @@
 </head>
 
 <body>
-  <div class="container">
-    <div id="content_wrapper">
-      <input type="number" name="node_number" id="node_number" max="100" min="1" placeholder="72">
-      <input class="btn btn-primary" type="button" value="Start" id="start_btn" />
-      <input class="btn btn-primary" type="button" value="Reset" id="reset_btn" />
-      <input class="btn btn-primary" type="button" value="Run Community Detection" id="comm_detect" />
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center">Louvain Algorithm D3 JS Demo</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <div class="row">
+          <div class="col-6">
+            <label for="node_number">Enter node number: </label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3"> <i class="fa fa-at" aria-hidden="true"></i>
+                </span>
+              </div>
+              <input type="number" class="form-control" id="node_number" name="node_number" aria-describedby="basic-addon3" value="72">
+            </div>
+            <input class="btn btn-primary" type="button" value="Start" id="start_btn" />
+            <input class="btn btn-primary d-none" type="button" value="Reset" id="reset_btn" />
+            <input class="btn btn-primary d-none" type="button" value="Run Community Detection" id="comm_detect" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="content-wrapper">
+
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        Data:
+        <p id='tableX'></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 d-flex justify-content-center align-items-center">
+      </div>
     </div>
   </div>
 </body>
 <script>
   d3.select("#start_btn").on("click", function () {
     node_number = $("input#node_number").val();
-    node_data = []
+    if (node_number == undefined || node_number == '') {
+      alert('Enter something pls');
+      return;
+    }
+    node_data = [];
     for (var i = 0; i < node_number; i++) {
       node_data.push(i);
     }
@@ -52,7 +90,18 @@
     //Drawing code
     var width = 600;
     var height = 600;
-
+    edge_data = [];
+    node_data.forEach(function (x) {
+      a = getRandomSubarray(node_data, getRandomInt(node_number / 10));
+      a.forEach(function (b) {
+        edge_data.push({
+          source: x,
+          target: b,
+          weight: getRandomFloat(2)
+        })
+      });
+    })
+    $("#tableX").text(edge_data.toString());
     var original_node_data = d3.entries(node_data);
     var max_weight = d3.max(edge_data, function (d) {
       return d.weight;
@@ -67,14 +116,14 @@
       .charge(-100)
       .linkDistance(20)
       .size([width, height]);
-
+    $(".content-wrapper").empty();
     var svg = d3
-      .select("body")
+      .select(".content-wrapper")
       .append("svg")
       .attr("width", width)
       .attr("height", height);
-    createTable([node_data]);
-    createTableFromX(edge_data);
+    // createTable([node_data]);
+    // createTableFromX(edge_data);
 
     force
       .nodes(original_node_data)
@@ -163,9 +212,9 @@
         node_ids.forEach(function (d) {
           original_node_data[d].community = community_assignment_result[d];
           max_community_number =
-            max_community_number < community_assignment_result[d]
-              ? community_assignment_result[d]
-              : max_community_number;
+            max_community_number < community_assignment_result[d] ?
+            community_assignment_result[d] :
+            max_community_number;
         });
 
         console.log(max_community_number);
