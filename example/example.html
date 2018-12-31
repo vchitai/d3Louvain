@@ -48,11 +48,12 @@
                 <span class="input-group-text" id="basic-addon3"> <i class="fa fa-at" aria-hidden="true"></i>
                 </span>
               </div>
-              <input type="number" class="form-control" id="node_number" name="node_number" aria-describedby="basic-addon3" value="72">
+              <input type="number" class="form-control" id="node_number" name="node_number" aria-describedby="basic-addon3"
+                value="40">
             </div>
             <input class="btn btn-primary" type="button" value="Start" id="start_btn" />
-            <input class="btn btn-primary d-none" type="button" value="Reset" id="reset_btn" />
-            <input class="btn btn-primary d-none" type="button" value="Run Community Detection" id="comm_detect" />
+            <input class="btn btn-primary" type="button" value="Reset" id="reset_btn" />
+            <input class="btn btn-primary" type="button" value="Run Community Detection" id="comm_detect" />
           </div>
         </div>
         <div class="row">
@@ -62,8 +63,76 @@
         </div>
       </div>
       <div class="col-6">
-        Data:
-        <p id='tableX'></p>
+        <p> Data:</p>
+        <p>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample">
+            Node Data
+          </button>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              <table class="table table-hover table-bordered5">
+                <thead>
+                  <tr>
+                    <th scope="col">Source</th>
+                    <th scope="col">Target</th>
+                    <th scope="col">Weight</th>
+                  </tr>
+                </thead>
+                <tbody id="tableX">
+                  <tr>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </p>
+        <p> Working:</p>
+        <p>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2"
+            aria-expanded="false" aria-controls="collapseExample2">
+            Node Data
+          </button>
+          <div class="collapse" id="collapseExample2">
+            <div class="card card-body">
+              <table class="table table-hover table-bordered5">
+                <thead>
+                  <tr>
+                    <th scope="col">Node</th>
+                    <th scope="col">Community</th>
+                  </tr>
+                </thead>
+                <tbody id="tableY">
+                  <tr>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                  </tr>
+                  <tr>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </p>
       </div>
     </div>
     <div class="row">
@@ -92,7 +161,7 @@
     var height = 600;
     edge_data = [];
     node_data.forEach(function (x) {
-      a = getRandomSubarray(node_data, getRandomInt(node_number / 10));
+      a = getRandomSubarray(node_data, getRandomInt(3));
       a.forEach(function (b) {
         edge_data.push({
           source: x,
@@ -101,7 +170,11 @@
         })
       });
     })
-    $("#tableX").text(edge_data.toString());
+    var Xstring = ""
+    edge_data.forEach(function (e) {
+      Xstring += "<tr><td>" + e.source + "</td><td>" + e.target + "</td><td>" + e.weight + "</td></tr>"
+    })
+    $("#tableX").html(Xstring);
     var original_node_data = d3.entries(node_data);
     var max_weight = d3.max(edge_data, function (d) {
       return d.weight;
@@ -208,6 +281,11 @@
 
         console.log("Resulting Community Data", community_assignment_result);
 
+        var Ystring = ""
+        Object.keys(community_assignment_result).forEach(function (k) {
+          Ystring += "<tr><td>" + k + "</td><td>" + community_assignment_result[k] + "</td></tr>"
+        })
+        $('#tableY').html(Ystring);
         var max_community_number = 0;
         node_ids.forEach(function (d) {
           original_node_data[d].community = community_assignment_result[d];
