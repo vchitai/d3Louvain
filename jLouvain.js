@@ -366,7 +366,9 @@
 			return partition_at_level(dendogram, dendogram.length - 1);
 		};
 		var nextS = -1;
-
+		core.resetAll = function() {
+			nextS = -1;
+		}
 		core.nextStep = function () {
 			if (nextS == -1) {	
 				var dendogram = generate_dendogram(original_graph, partition_init);
